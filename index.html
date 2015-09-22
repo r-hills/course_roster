@@ -4,11 +4,14 @@
 	<title>Student Roster</title>
 	<script src="lib/angular.js"></script>
 	<script src="app.js"></script>
-	<script src="js/StudentsController.js"></script> 
+	<script src="controllers/StudentsController.js"></script>
+	<script src="controllers/FieldTripsController.js"></script>  
+	<script src="services/StudentsFactory.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 </head>
 <body>
-	<div class="container" ng-controller="StudentsCtrl">
+	<div class="container">
+		<div ng-controller="StudentsCtrl">
 		<div class="row" ng-show="students.length">
 			<div class="col-md-4">
 				<h4>Search Students</h4>
@@ -27,11 +30,11 @@
 					<li ng-repeat="item in filtered = (students|filter:query)">
 						<span ng-click="editing = true" ng-hide="editing">
 						{{ item.name }}
-						<a ng-click="deleteStudent(item)">Delete</a>
+						<a ng-click="StudentsFactory.deleteStudent(item)">Delete</a>
 						</span>
 						<span class="form-group" ng-show="editing" ng-submit="editing = false">
 							<form class="form-inline" role="form"> 
-								<input type="text" class="form-control input-sm" ng-model="item.name" paceholder="name" required>
+								<input type="text" class="form-control input-sm" ng-model="item.name" placeholder="name" required>
 								<button type="submit" class="btn btn-default btn-sm">Save</button>
 							</form>
 						</span>
@@ -40,12 +43,32 @@
 			</div>
 			<div class="col-md-4">
 				<h2>New Student</h2> 
-				<form ng-submit="addStudent()" class="form-inline" role="form">
+				<form ng-submit="StudentsFactory.addStudent()" class="form-inline" role="form">
 					<div class="form-group">
-						<input type="text" ng-model="studentName" class="form-control" placeholder="Enter Name">
+						<input type="text" ng-model="StudentsFactory.studentName" class="form-control" placeholder="Enter Name">
 					</div>
 					<button type="submit" class="btn btn-default">Submit</button>
 				</form> 
+			</div>
+		</div>
+		<div class="row permission" ng-controller="FieldTripsCtrl">
+			<div classs="col-md-6" ng-show="studentsWithoutPermission.length">
+				<h3>Without Permission Slips</h3>
+				<ul>
+					<li ng-repeat="item in studentsWithoutPermission = (students|filter:{permissionSlip:false})"> 
+						{{item.name}}<a ng-click="addStudentWithPermissionSlip(item)">-received permission slip-</a>
+					</li>
+				<ul>
+			</div>
+			<div class="row permission" ng-controller="FieldTripsCtrl">
+				<div class="col-md-6"> 
+					<h2>Permission Slips</h2>
+					<ul>
+						<li ng-repeat="item in studentsWithPermission = (students|filter:{permissionSlip:true})">
+							{{ item.name }}
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
